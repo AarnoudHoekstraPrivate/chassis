@@ -1,6 +1,6 @@
 {
     "name": "Chassis",
-    "version": "1.0.2",
+    "version": "1.0.3",
     "description": "A library with functions for managing a motor chassis (4 wheels) with lights and commands, arduino mega based.",
     "keywords": "Arduino, robot, frame",
     "repository":
@@ -17,7 +17,7 @@
     },
     "dependencies": 
     {
-        "arduino-libraries/SD": ">1.2.4"
+        "arduino-libraries/SD": ">=1.2.4"
     },
     "frameworks": "arduino",
     "platforms": "atmelmegaavr",
