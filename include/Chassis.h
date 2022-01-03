@@ -9,7 +9,6 @@
 #define Chassis_h
 
 #include <Arduino.h>
-
 #include <SD.h>
 
 // debug define
