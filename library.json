@@ -9,15 +9,17 @@
         "url": "https://github.com/AarnoudHoekstraPrivate/chassis.git"
     },
     "authors":
-    [
-        {
-            "name": "Aarnoud Hoekstra",
-            "email": "aaho@xs4all.nl",
-            "url": ""
-            "maintainer": true
-        }
-    ],
-
-    "frameworks": "Arduino",
-    "platforms": "Atmel MegaAVR"
+    {
+         "name": "Aarnoud Hoekstra",
+         "email": "aaho@xs4all.nl",
+         "url": "http://hoekiepoekie.eu",
+         "maintainer": true
+    },
+    "dependencies": 
+    {
+        "arduino-libraries/SD": ">1.2.4"
+    },
+    "frameworks": "arduino",
+    "platforms": "atmelmegaavr",
+    "headers": "Chassis.h"
 }
