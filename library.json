@@ -20,6 +20,6 @@
         "arduino-libraries/SD": ">=1.2.4"
     },
     "frameworks": "arduino",
-    "platforms": "atmelmegaavr",
+    "platforms": "atmelavr",
     "headers": "Chassis.h"
 }
