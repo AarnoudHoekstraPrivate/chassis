@@ -500,7 +500,7 @@ void setup()
   digitalWrite(keyPin, HIGH);
 
   mySerial.begin(9600);  //Default Baud for comm, it may be different for your Module. 
-  while (!mySerial.available()) {;}
+  while (mySerial.available()) {;}
   
   Serial.println("The bluetooth gates are open.\n Connect to HC-42 from any other bluetooth device");
 } 
