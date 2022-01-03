@@ -14,7 +14,7 @@ Further assumptions:
   - Wheel counters are used
 
 Chassis example:
-https://www.pngwing.com/en/free-png-xoejj (not bought but just an illustration of the base)
+https://www.pngwing.com/en/free-png-xoejj (off the shelf product)
 
 The structure for the SD-CARD:
 
