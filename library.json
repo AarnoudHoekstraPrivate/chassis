@@ -21,5 +21,8 @@
     },
     "frameworks": "arduino",
     "platforms": "atmelavr",
-    "headers": "Chassis.h"
+    
+    "headers": "Chassis.h",
+
+    "license": "AFL-3.0"
 }
