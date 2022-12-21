@@ -1,2 +1,3 @@
 2022-04-01: VERSION 1.0.4 Fixed bug in example code
 2022-04-01: VERSION 1.0.5 Updated license model
+2022-21-12: VERDION 1.1.0 Added functionality to write to different ouputs (Serial, Wire)

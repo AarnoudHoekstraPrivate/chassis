@@ -1,6 +1,6 @@
 {
     "name": "Chassis",
-    "version": "1.0.5",
+    "version": "1.1.0",
     "description": "A library with functions for managing a motor chassis (4 wheels) with lights and commands, arduino mega based.",
     "keywords": "Arduino, robot, frame",
     "repository":
@@ -11,7 +11,7 @@
     "authors":
     {
          "name": "Aarnoud Hoekstra",
-         "email": "aaho@xs4all.nl",
+         "email": "aarhoe@icloud.com",
          "url": "http://hoekiepoekie.eu",
          "maintainer": true
     },
