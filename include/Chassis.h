@@ -10,6 +10,7 @@
 
 #include <Arduino.h>
 #include <SD.h>
+#include <Wire.h>
 
 // debug define
 #define DEBUG                     false
@@ -78,6 +79,12 @@ class Chassis {
     
     unsigned int cumulativeDistance;
     
+    // outputting through various channels
+    boolean setSerial(boolean setting);
+    boolean setWire(boolean setting);
+    void writeToOutput(String outputText);
+    boolean setReceivingEnd(uint8_t receiver);
+
 private:
     // default settings, can be changed during init phase
     int chassisWheels[NUM_WHEELS][NUM_WHEEL_PINS] = {
@@ -93,13 +100,13 @@ private:
     String configFile  = DEFAULT_CONF_FILE;
     String commandFile = DEFAULT_COMMAND_FILE;
     
-    bool lightsEnabled = false;
+    bool lightsEnabled  = false;
     bool lightsOverride = false;
     bool lightStatus[NUM_LIGHT_PINS] = {false, false, false, false};
  
     int  wheelSpeedStatus[NUM_WHEELS] = {0, 0, 0, 0};
  
-    bool manualMode = true;
+    boolean manualMode = true;
     
     // configuration items
     String configItemList[NUM_CONFIG_ITEMS][2] = {
@@ -124,7 +131,11 @@ private:
                                                 };
     boolean setConfValues();
     boolean validateCommand(String cmdString);
-    
+
+    // outputStreams
+    boolean haveSerial   = false;
+    boolean haveWire     = false;  
+    uint8_t receivingEnd = 0x08;
 };
 
 //

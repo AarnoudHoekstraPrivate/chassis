@@ -12,11 +12,14 @@
 //
 Chassis::Chassis()
 {
-    lightsEnabled = false;
-    lightsOverride = false;
-    runCycles = 0;
-    configFile = DEFAULT_CONF_FILE;
-    commandFile = DEFAULT_COMMAND_FILE;
+    lightsEnabled      = false;
+    lightsOverride     = false;
+    haveSerial         = false;  // switch off Serial by default
+    haveWire           = false;  // switch off Wire by default
+    receivingEnd       = 0x08;   // receiving end is default 0x08
+    runCycles          = 0;
+    configFile         = DEFAULT_CONF_FILE;
+    commandFile        = DEFAULT_COMMAND_FILE;
     cumulativeDistance = 0;
     pinMode(chassisBLE[2], OUTPUT);
 }
@@ -136,7 +139,7 @@ boolean Chassis::initialiseFromFile(String fileName)
     
     if (fileName == NULL)
     {
-        Serial.println("Chassis::initialiseFromFile ERROR fileName is NULL");
+        writeToOutput("Chassis::initialiseFromFile ERROR fileName is NULL");
         
         success = false;
     }
@@ -199,9 +202,7 @@ boolean Chassis::initialiseFromFile(String fileName)
 
                 if (!found)
                 {
-                    Serial.print("Chassis::initialiseFromFile ERROR CONFIG ITEM ");
-                    Serial.print(confItems[i][0]);
-                    Serial.println(" not found in the conf items list");
+                    writeToOutput("Chassis::initialiseFromFile ERROR CONFIG ITEM " + String(confItems[i][0]) + " not found in the conf items list");
                     
                     success = success && false;
                 }
@@ -216,14 +217,13 @@ boolean Chassis::initialiseFromFile(String fileName)
         }
         else
         {
-            Serial.print("Chassis::initialiseFromFile ERROR cannot open file: ");
-            Serial.println(fileName);
+            writeToOutput("Chassis::initialiseFromFile ERROR cannot open file: " + fileName);
             
             success = success && false;
         }
     }
     else
-        Serial.println("Chassis::initialiseFromFile ERROR cannot initialise SD card");
+        writeToOutput("Chassis::initialiseFromFile ERROR cannot initialise SD card");
         
     return success;
  }
@@ -493,9 +493,7 @@ boolean Chassis::setConfValues()
       String value = configItemList[i][1];
       if ((value[0] != '{') && (value[value.length()] != '}'))
       {
-        Serial.print("Chassis::setConfValue BLE_PINS: ERROR value ");
-        Serial.print(value);
-        Serial.println(" is not a valid array");
+        writeToOutput("Chassis::setConfValue BLE_PINS: ERROR value " + String(value) + " is not a valid array");
         
         success = success && false;
       }
@@ -538,9 +536,7 @@ boolean Chassis::setConfValues()
       String value = configItemList[i][1];
       if ((value[0] != '{') && (value[value.length()] != '}'))
       {
-        Serial.print("Chassis::setConfValue LIGHT_PINS ERROR value ");
-        Serial.print(value);
-        Serial.println(" is not a valid array");
+        writeToOutput("Chassis::setConfValue LIGHT_PINS ERROR value " + String(value) + " is not a valid array");
           
         success = success && false;
       }
@@ -587,52 +583,60 @@ boolean Chassis::setConfValues()
 //
 void Chassis::dumpSettings()
 {
-    Serial.println("Dumping current configured settings");
+    String sendText = "";
+
+    writeToOutput("Dumping current configured settings");
     
     // dumping wheelpin settings
-    Serial.print("Dumping wheel pin settings ");
+    writeToOutput("Dumping wheel pin settings ");
     for (int i=0; i < NUM_WHEELS; i++)
     {
-        Serial.print("{");
+       sendText = "   {";
         for (int j=0; j < NUM_WHEEL_PINS; j++)
         {
-            Serial.print(chassisWheels[i][j]);
-            if (j != NUM_WHEEL_PINS-1) Serial.print(",");
+            sendText += String(chassisWheels[i][j]);
+            if (j != NUM_WHEEL_PINS-1) sendText += ",";
         }
-        Serial.print("} ");
+        sendText += "}";
+        writeToOutput(sendText);
     }
-    Serial.println("");
+    
     
     // dumping the light settings
-    Serial.println("Dumping light settings");
-    Serial.print("   Light pin settings {");
+    writeToOutput("Dumping light settings");
+
+    sendText = "   Light pin settings {";
     for (int i=0; i < NUM_LIGHT_PINS; i++)
     {
-        Serial.print(chassisLights[i]);
-        if (i != NUM_LIGHT_PINS-1) Serial.print(",");
+        sendText += String(chassisLights[i]);
+        if (i != NUM_LIGHT_PINS-1) sendText += (",");
     }
-    Serial.println("}");
-    Serial.print("   Lights enabled ");
-    if (lightsEnabled) Serial.println("YES");
-    if (!lightsEnabled) Serial.println("NO");
-    Serial.print("   Lights override ");
-    if (lightsOverride) Serial.println("YES");
-    if (!lightsOverride) Serial.println("NO");
+    sendText += "}";
+    writeToOutput(sendText);
+
+    sendText = "   Lights enabled ";
+    if (lightsEnabled) writeToOutput(sendText + "YES");
+    if (!lightsEnabled) writeToOutput(sendText + "NO");
+
+    sendText = "   Lights override ";
+    if (lightsOverride) writeToOutput(sendText + "YES");
+    if (!lightsOverride) writeToOutput(sendText + "NO");
     
     // dumping the BLE settings
-    Serial.print("Dumping BLE pin settings {");
+    sendText = "Dumping BLE pin settings {";
     for (int i=0; i < NUM_BLE_PINS; i++)
     {
-        Serial.print(chassisBLE[i]);
-        if (i != NUM_BLE_PINS-1) Serial.print(",");
+        sendText +=  String(chassisBLE[i]);
+        if (i != NUM_BLE_PINS-1) sendText += ",";
     }
-    Serial.println("}");
+    sendText += "}";
+    writeToOutput(sendText);
     
     // dumping the generic settings
-    Serial.println("Dumping generic settings");
-    Serial.print("   ConfigFile ");  Serial.println(configFile);
-    Serial.print("   CommandFile "); Serial.println(commandFile);
-    Serial.print("   Run cycles ");  Serial.println(runCycles);
+    writeToOutput("Dumping generic settings");
+    writeToOutput("   ConfigFile "  + configFile); 
+    writeToOutput("   CommandFile " + commandFile);
+    writeToOutput("   Run cycles "  + String(runCycles));
 }
 
 //
@@ -788,4 +792,110 @@ void pulseCounterRLW()
 void pulseCounterRRW()
 {
     numPulses[3]++;
+}
+
+//
+// writeToOuput can be used to write to both serial and wire.
+// for wire we have start/stop bytes (first 2 bytes) of a frame containing max of 30 bytes of info
+//
+// A set of frames has two reserved bytes. The first two bytes are:
+//
+//  start = '06'
+//  continuation = '07'
+//  stop = '08'
+//
+// '06' '08' = 1 frame
+// '06' '07' followed by '07' '08' = 2 frames
+// '07' '07' for more than 2 frames. '06' '07' start frame; '07' '07' (one of more times); '07' '08' stop frame
+// 
+// Depending on the variable setting in myChassis it will output to Serial and/or Wire
+//
+const int frameSize = 30;   
+
+void Chassis::writeToOutput(String outputText)
+{
+  if (haveSerial)
+  {
+    Serial.println(outputText);
+  }
+
+  if (haveWire)
+  {
+    //
+    // Wire can only send 32 bytes max at the time so we need to send in chunks
+    //
+    int lenText = outputText.length();
+    int numChunks = ceil(lenText / 30);
+
+    int i = 0;
+    int endPos = 0;
+
+    while (i <= numChunks)
+    {
+      endPos = (i+1)*frameSize > lenText?lenText:(i+1)*frameSize;
+
+      Wire.beginTransmission(receivingEnd); // assume receivi
+
+      if (i == 0)
+      {
+        // start frame
+        Wire.write(6);
+        Wire.write((numChunks > 0)?7:8);
+        Wire.print(outputText.substring(i*frameSize, endPos));
+
+        // Serial.print("Writing  6+"); Serial.println((numChunks > 1)?7:8);
+      }
+      else if (i == numChunks)
+      {
+        // end frame
+        Wire.write((numChunks > 0)?7:6);
+        Wire.write(8);
+        Wire.print(outputText.substring(i*frameSize, endPos));
+
+        // Serial.print("Writing ");Serial.print((numChunks > 0)?7:6);Serial.println("+8");
+      }
+      else
+      {
+        // middle frame
+        Wire.write(7);
+        Wire.write(7);
+        Wire.print(outputText.substring(i*30, endPos));
+
+        // Serial.println("Writing 7+7");
+      }
+
+      Wire.endTransmission();
+      i++;
+    }
+  }
+}                                              
+
+//
+// setting serial
+//
+boolean Chassis::setSerial(boolean setting)
+{
+    haveSerial = setting;
+    
+    return true;
+}
+
+//
+// setting Wire
+//
+boolean Chassis::setWire(boolean setting)
+{
+    haveWire = setting;
+
+    return true;
+}
+
+//
+// set receivingEnd
+//
+boolean Chassis::setReceivingEnd(uint8_t receiver)
+{
+  receivingEnd = receiver;
+
+  return true;
 }
