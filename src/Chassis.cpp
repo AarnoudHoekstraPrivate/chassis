@@ -17,7 +17,7 @@ Chassis::Chassis()
     haveSerial         = false;  // switch off Serial by default
     haveWire           = false;  // switch off Wire by default
     receivingEnd       = 0x08;   // receiving end is default 0x08
-    runCycles          = 0;
+    runCycles          = MAX_RUN_CYCLES;
     configFile         = DEFAULT_CONF_FILE;
     commandFile        = DEFAULT_COMMAND_FILE;
     cumulativeDistance = 0;
@@ -28,7 +28,7 @@ Chassis::Chassis()
 //
 // wheelPinSettings is a 4 by 3 array
 //   rows of the array are the wheels in order flw, frw, rlw, rrw
-//   columns of the array are the pin definitions for the wheels being analog (enA/enB), digital (in1/in3), digital (in2/in4)
+//   columns of the array are the pin definitions for the wheels being analog (enA/enB), digital (in2/in4), digital (in1/in3)
 //
 // the definitions below are standard for a arduino mega should be properly set up during initialization phase of the chassis
 //
@@ -44,9 +44,9 @@ Chassis::Chassis()
 // returns success = true for success
 // returns success = false for failure
 //
-boolean Chassis::initialiseWheels(int wheelPinSettings[NUM_WHEELS][NUM_WHEEL_PINS])
+bool Chassis::initialiseWheels(int wheelPinSettings[NUM_WHEELS][NUM_WHEEL_PINS])
 {
-  boolean success = false;
+  bool success = false;
  
   if (wheelPinSettings != NULL)
   {
@@ -82,9 +82,9 @@ boolean Chassis::initialiseWheels(int wheelPinSettings[NUM_WHEELS][NUM_WHEEL_PIN
 // returns false for failure
 // returns true for success and sets lightsEnable private variable to true
 //
-boolean Chassis::initialiseLights(int lightPinSettings[NUM_LIGHT_PINS])
+bool Chassis::initialiseLights(int lightPinSettings[NUM_LIGHT_PINS])
 {
- boolean success = false;
+ bool success = false;
 
  lightsEnabled = false;
  lightsOverride = false;
@@ -113,10 +113,9 @@ boolean Chassis::initialiseLights(int lightPinSettings[NUM_LIGHT_PINS])
 //
 // returns false for failure
 // returns true for success and sets the BLE pins private variable to true
-//
-boolean Chassis::initialiseBLE(int blePinSettings[NUM_BLE_PINS])
+bool Chassis::initialiseBLE(int blePinSettings[NUM_BLE_PINS])
 {
- boolean success = true;
+ bool success = true;
 
  for (int i=0; i < NUM_BLE_PINS; i++)
     chassisBLE[i] = blePinSettings[i];
@@ -132,10 +131,9 @@ boolean Chassis::initialiseBLE(int blePinSettings[NUM_BLE_PINS])
 //
 // Returns true upon successful parsing of the file
 //         false otherwise
-//
-boolean Chassis::initialiseFromFile(String fileName)
+bool Chassis::initialiseFromFile(String fileName)
 {
-    boolean success = true;
+    bool success = true;
     
     if (fileName == NULL)
     {
@@ -231,15 +229,14 @@ boolean Chassis::initialiseFromFile(String fileName)
 //
 // set Manual (blootooth/other) controlled mode or automated (reading the guidance file)
 //
-void Chassis::setManualMode(boolean mode)
+void Chassis::setManualMode(bool mode)
 {
     manualMode = mode;
 }
 
 //
 // return the current setting
-//
-boolean Chassis::getManualMode()
+bool Chassis::getManualMode()
 {
     return manualMode;
 }
@@ -261,7 +258,7 @@ void Chassis::moveWheels(int movements[NUM_WHEELS])
 {
   int wheelSpeed = 0;
   int sumOfWheelSpeed = 0;
-  boolean lights[NUM_LIGHT_PINS] = {false, false, false, false};
+  bool lights[NUM_LIGHT_PINS] = {false, false, false, false};
 
   for (int wheel=0; wheel < NUM_WHEELS; wheel++)
   {
@@ -379,18 +376,17 @@ void Chassis::doRotate(int angle)
 
 //
 // have we enabled the lights?
-//
-boolean Chassis::areLightsEnabled()
+bool Chassis::areLightsEnabled()
 {
     return lightsEnabled;
 }
 
-boolean Chassis::isLightsOverrideEnabled()
+bool Chassis::isLightsOverrideEnabled()
 {
     return lightsOverride;
 }
 
-void Chassis::setLightsOverride(boolean setting)
+void Chassis::setLightsOverride(bool setting)
 {
     lightsOverride = setting;
 }
@@ -398,7 +394,7 @@ void Chassis::setLightsOverride(boolean setting)
 //
 // switch on the lights
 //
-void Chassis::switchLightsOn(boolean lights[NUM_LIGHT_PINS])
+void Chassis::switchLightsOn(bool lights[NUM_LIGHT_PINS])
 {
     if (lightsEnabled)
         for (int light=0; light < NUM_LIGHT_PINS; light++)
@@ -411,7 +407,7 @@ void Chassis::switchLightsOn(boolean lights[NUM_LIGHT_PINS])
 //
 // enable Lights (default = true)
 //
-void Chassis::setLights(boolean setting)
+void Chassis::setLights(bool setting)
 {
     lightsEnabled = setting;
 }
@@ -446,9 +442,9 @@ void Chassis::setCommandFile(String commandFileName)
     commandFile = commandFileName;
 }
 
-boolean Chassis::setConfValues()
+bool Chassis::setConfValues()
 {
-  boolean success = true;
+  bool success = true;
 
   Serial.println("");
     
@@ -504,7 +500,7 @@ boolean Chassis::setConfValues()
         // we expect 3 elements in the array
         unsigned int posStart = 0;
         unsigned int posEnd = 0;
-        // boolean found = false;
+        // bool found = false;
         int valueFound = 0;
 
         while ((posStart < value.length()) && (valueFound < NUM_BLE_PINS))
@@ -547,7 +543,7 @@ boolean Chassis::setConfValues()
         // we expect 4 elements in the array
         unsigned int posStart = 0;
         unsigned int posEnd = 0;
-        // boolean found = false;
+        // bool found = false;
         int valueFound = 0;
 
         while ((posStart < value.length()) && (valueFound < NUM_LIGHT_PINS))
@@ -644,10 +640,9 @@ void Chassis::dumpSettings()
 //
 // returns true  when found
 // returns false when not found
-//
-boolean Chassis::validateCommand(String cmdString)
+bool Chassis::validateCommand(String cmdString)
 {
-    boolean found = false;
+    bool found = false;
     int pos = 0;
     
     while ((!found) && (pos < NUM_OF_COMMANDS))
@@ -676,8 +671,7 @@ int Chassis::getRunCycles()
 volatile byte numPulses[NUM_WHEELS];
 unsigned int cumulativeDistances[NUM_WHEELS];
 int pulseCounters[NUM_WHEELS] = {18, 19, 2, 3};
-
-boolean initialisePulseCounters()
+bool initialisePulseCounters()
 {
     attachInterrupt(digitalPinToInterrupt(pulseCounters[0]), pulseCounterFLW, PULSE_DETECTION);  // FLW sits on INT 2
     attachInterrupt(digitalPinToInterrupt(pulseCounters[1]), pulseCounterFRW, PULSE_DETECTION);  // FRW sits on INT 3
@@ -872,8 +866,7 @@ void Chassis::writeToOutput(String outputText)
 
 //
 // setting serial
-//
-boolean Chassis::setSerial(boolean setting)
+bool Chassis::setSerial(bool setting)
 {
     haveSerial = setting;
     
@@ -882,8 +875,7 @@ boolean Chassis::setSerial(boolean setting)
 
 //
 // setting Wire
-//
-boolean Chassis::setWire(boolean setting)
+bool Chassis::setWire(bool setting)
 {
     haveWire = setting;
 
@@ -892,8 +884,7 @@ boolean Chassis::setWire(boolean setting)
 
 //
 // set receivingEnd
-//
-boolean Chassis::setReceivingEnd(uint8_t receiver)
+bool Chassis::setReceivingEnd(uint8_t receiver)
 {
   receivingEnd = receiver;
 

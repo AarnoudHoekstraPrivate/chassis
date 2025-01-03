@@ -45,12 +45,12 @@ class Chassis {
     Chassis(void);
     
     // Configuration
-    boolean initialiseWheels(int wheelPinSettings[NUM_WHEELS][NUM_WHEEL_PINS]);
-    boolean initialiseLights(int lightPinSettings[NUM_LIGHT_PINS]);
-    boolean initialiseBLE(int blePinSettings[NUM_BLE_PINS]);
+    bool initialiseWheels(int wheelPinSettings[NUM_WHEELS][NUM_WHEEL_PINS]);
+    bool initialiseLights(int lightPinSettings[NUM_LIGHT_PINS]);
+    bool initialiseBLE(int blePinSettings[NUM_BLE_PINS]);
     
     // Configuration from file and associated functions
-    boolean initialiseFromFile(String fileName);
+    bool initialiseFromFile(String fileName);
     void setCommandFile(String commandFileName);
     void dumpSettings();
     void setRunCycles(int setting);
@@ -65,38 +65,38 @@ class Chassis {
     String getWheelSpeedStatus();
 
     // light functions
-    void switchLightsOn(boolean lights[NUM_LIGHT_PINS]);
-    void setLightsOverride(boolean setting);
-    void setLights(boolean setting);
-    boolean areLightsEnabled();
-    boolean isLightsOverrideEnabled();
+    void switchLightsOn(bool lights[NUM_LIGHT_PINS]);
+    void setLightsOverride(bool setting);
+    void setLights(bool setting);
+    bool areLightsEnabled();
+    bool isLightsOverrideEnabled();
     String  getLightsStatus();
 
     // generic items
  
-    void setManualMode(boolean mode);
-    boolean getManualMode();
+    void setManualMode(bool mode);
+    bool getManualMode();
     
     unsigned int cumulativeDistance;
     
     // outputting through various channels
-    boolean setSerial(boolean setting);
-    boolean setWire(boolean setting);
+    bool setSerial(bool setting);
+    bool setWire(bool setting);
     void writeToOutput(String outputText);
-    boolean setReceivingEnd(uint8_t receiver);
+    bool setReceivingEnd(uint8_t receiver);
 
 private:
     // default settings, can be changed during init phase
     int chassisWheels[NUM_WHEELS][NUM_WHEEL_PINS] = {
-                                                        {4, 31, 32},  // lfw
-                                                        {5, 24, 30},  // rfw
-                                                        {6, 38, 39},  // lrw
-                                                        {7, 27, 28}   // rrw
+                                                        {4, 31, 32},  // lfw  ENA, EN2, EN1
+                                                        {5, 24, 30},  // rfw  ENB, EN4, EN3
+                                                        {6, 38, 39},  // lrw  ENB, EN4, EN3
+                                                        {7, 27, 28}   // rrw  ENA, EN2, EN1
                                                     };
     int chassisLights[NUM_LIGHT_PINS] = {42, 43, 44, 45};  // lfl, rfl, rll, rrl
     int chassisBLE[NUM_BLE_PINS]      = {10, 11, 9};       // RX pin Arduino -> TX on Module, TX pin Arduino -> RX on Module, Key pin in case of BLE module
      
-    int runCycles = 0;  // number of cycles to run, default is infinite
+    int runCycles = MAX_RUN_CYCLES;  // number of cycles to run
     String configFile  = DEFAULT_CONF_FILE;
     String commandFile = DEFAULT_COMMAND_FILE;
     
@@ -106,7 +106,7 @@ private:
  
     int  wheelSpeedStatus[NUM_WHEELS] = {0, 0, 0, 0};
  
-    boolean manualMode = true;
+    bool manualMode = true;
     
     // configuration items
     String configItemList[NUM_CONFIG_ITEMS][2] = {
@@ -129,12 +129,12 @@ private:
                                     {"DURATION", "1"},
                                     {"DISTANCE", "1"}
                                                 };
-    boolean setConfValues();
-    boolean validateCommand(String cmdString);
+    bool setConfValues();
+    bool validateCommand(String cmdString);
 
     // outputStreams
-    boolean haveSerial   = false;
-    boolean haveWire     = false;  
+    bool haveSerial   = false;
+    bool haveWire     = false;  
     uint8_t receivingEnd = 0x08;
 };
 
@@ -145,7 +145,7 @@ extern volatile byte numPulses[];
 extern unsigned int cumulativeDistances[];
 extern int pulseCounters[];
 
-extern boolean initialisePulseCounters();
+extern bool initialisePulseCounters();
 extern void doPulseCalculation();
 extern void pulseCounterFLW();
 extern void pulseCounterFRW();
