@@ -22,6 +22,16 @@ Further assumptions:<br>
   Key points
 
   - Target platform: Arduino Mega / ATmega2560
+  # chassis
+
+  [![CI](https://github.com/AarnoudHoekstraPrivate/chassis/actions/workflows/ci.yml/badge.svg)](https://github.com/AarnoudHoekstraPrivate/chassis/actions)
+  [![License](https://img.shields.io/badge/license-AFL--3.0-blue.svg)](LICENSE)
+
+  Chassis is an Arduino library to control a 4-wheel motor chassis with optional lights, wheel counters and SD-command support.
+
+  Key points
+
+  - Target platform: Arduino Mega / ATmega2560
   - Depends on Arduino `SD` library for SD-command support
   - Optional BLE support for remote commands
 
@@ -137,10 +147,11 @@ Further assumptions:<br>
   - BLE pins: {10, 11, 9} (RX, TX, KEY)
 
   Wiring notes
-  ### Wiring diagram
-
-  ![Wiring diagram](docs/wiring.svg)
 
   - Use an appropriate motor driver for the voltage/current of your motors. The EN and control pins are the logic pins driven by the Arduino; make sure the motor driver has a common ground with the Arduino.
   - If using wheel counters, wire the pulse outputs to interrupt-capable pins and configure them as per the library examples.
+
+  ### Wiring diagram
+
+  ![Wiring diagram](docs/wiring.svg)
 
