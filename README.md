@@ -86,3 +86,58 @@ Further assumptions:<br>
   ## License
 
   This library is released under the AFL-3.0 license. See `LICENSE` for details.
+
+  ## API Reference (selected)
+
+  These are the main public methods available on the `Chassis` class (see `include/Chassis.h` for details):
+
+  - Constructor
+    - `Chassis()` — create an instance
+
+  - Configuration
+    - `initialiseWheels(int wheelPinSettings[NUM_WHEELS][NUM_WHEEL_PINS])` — set custom wheel pin mapping
+    - `initialiseLights(int lightPinSettings[NUM_LIGHT_PINS])` — set light pins
+    - `initialiseBLE(int blePinSettings[NUM_BLE_PINS])` — set BLE pins
+    - `initialiseFromFile(String fileName)` — read configuration from SD card
+    - `setCommandFile(String commandFileName)` — set the SD command file path
+    - `dumpSettings()` — print current settings to output
+
+  - Movement
+    - `moveWheels(int movements[NUM_WHEELS])` — low-level wheel control
+    - `moveForward(int speed)` — move forward at speed (0..255)
+    - `moveBackwards(int speed)` — move backwards
+    - `doFullStop()` — stop all wheels
+    - `doRotate(int angle)` — rotate by degrees
+    - `getWheelSpeedStatus()` — returns a string describing current wheel speeds
+
+  - Lights
+    - `switchLightsOn(bool lights[NUM_LIGHT_PINS])` — set individual lights
+    - `setLightsOverride(bool setting)` — override automatic light handling
+    - `setLights(bool setting)` — turn all lights on/off
+    - `areLightsEnabled()` / `isLightsOverrideEnabled()` — check status
+    - `getLightsStatus()` — status string
+
+  - Misc
+    - `setManualMode(bool mode)` / `getManualMode()`
+    - `setSerial(bool setting)` / `setWire(bool setting)` — enable serial/I2C output
+    - `writeToOutput(String outputText)` — write to configured outputs
+
+  ## Default wiring / pin map
+
+  The library defines default pin mapping values which can be overridden during initialization. Defaults (from `include/Chassis.h`):
+
+  - Wheel pins (each row: ENx, control pin 2, control pin 3)
+
+    - Front-left:  {4, 31, 32}
+    - Front-right: {5, 24, 30}
+    - Rear-left:   {6, 38, 39}
+    - Rear-right:  {7, 27, 28}
+
+  - Lights (4 pins): {42, 43, 44, 45} (lfl, rfl, rll, rrl)
+  - BLE pins: {10, 11, 9} (RX, TX, KEY)
+
+  Wiring notes
+
+  - Use an appropriate motor driver for the voltage/current of your motors. The EN and control pins are the logic pins driven by the Arduino; make sure the motor driver has a common ground with the Arduino.
+  - If using wheel counters, wire the pulse outputs to interrupt-capable pins and configure them as per the library examples.
+
