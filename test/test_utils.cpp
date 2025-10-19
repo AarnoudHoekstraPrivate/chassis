@@ -12,10 +12,4 @@ void test_clamp() {
   TEST_ASSERT_EQUAL(7, clampInt(7, 5, 10));
 }
 
-void setup() {
-  UNITY_BEGIN();
-  RUN_TEST(test_clamp);
-  UNITY_END();
-}
-
-void loop() {}
+// setup()/loop() moved to test_runner.cpp

@@ -1,4 +1,13 @@
 #include <unity.h>
+#if defined(__has_include)
+#  if __has_include(<Arduino.h>)
+#    include <Arduino.h>
+#  elif __has_include(<arduino.h>)
+#    include <arduino.h>
+#  endif
+#else
+#  include <Arduino.h>
+#endif
 
 // Simple parser: expects "KEY=VALUE" and returns value
 static String parseValue(const String &line) {
@@ -13,10 +22,4 @@ void test_parse_config() {
   TEST_ASSERT_EQUAL_STRING("", parseValue(String("INVALID")).c_str());
 }
 
-void setup() {
-  UNITY_BEGIN();
-  RUN_TEST(test_parse_config);
-  UNITY_END();
-}
-
-void loop() {}
+// setup()/loop() moved to test_runner.cpp to avoid multiple-definition errors
