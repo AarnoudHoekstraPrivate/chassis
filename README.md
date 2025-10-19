@@ -137,6 +137,9 @@ Further assumptions:<br>
   - BLE pins: {10, 11, 9} (RX, TX, KEY)
 
   Wiring notes
+  ### Wiring diagram
+
+  ![Wiring diagram](docs/wiring.svg)
 
   - Use an appropriate motor driver for the voltage/current of your motors. The EN and control pins are the logic pins driven by the Arduino; make sure the motor driver has a common ground with the Arduino.
   - If using wheel counters, wire the pulse outputs to interrupt-capable pins and configure them as per the library examples.
