@@ -12,65 +12,77 @@ The wheel counter are catered for but not required unless one needs to travel a 
 Further assumptions:<br>
   - A motor driver is used to drive the chassis motors (forward, backward and speed)<br>
   - 4 LED lights are used<br>
-  - Wheel counters are used<br>
-<br>
-Chassis example:
-https://www.pngwing.com/en/free-png-xoejj (off the shelf product) <br>
-<br>
+  # chassis
 
-# The structure for the SD-CARD
+  [![CI](https://github.com/AarnoudHoekstraPrivate/chassis/actions/workflows/ci.yml/badge.svg)](https://github.com/AarnoudHoekstraPrivate/chassis/actions)
+  [![License](https://img.shields.io/badge/license-AFL--3.0-blue.svg)](LICENSE)
 
-"root" folder contains the CONF.TXT for configuration purposes<br>
-"commands" folder contains the GUIDE.TXT for the actual commands<br>
-<br> 
- At this moment there are 7 commands available
-# chassis
+  Chassis is an Arduino library to control a 4-wheel motor chassis with optional lights, wheel counters and SD-command support.
 
-Chassis is an Arduino library to control a 4-wheel motor chassis with optional lights, wheel counters and SD-command support. Target platform: Arduino Mega / ATmega2560.
+  Key points
 
-[![CI](https://github.com/AarnoudHoekstraPrivate/chassis/actions/workflows/ci.yml/badge.svg)](https://github.com/AarnoudHoekstraPrivate/chassis/actions)
-[![License](https://img.shields.io/badge/license-AFL--3.0-blue.svg)](LICENSE)
+  - Target platform: Arduino Mega / ATmega2560
+  - Depends on Arduino `SD` library for SD-command support
+  - Optional BLE support for remote commands
 
-## Quickstart
+  ## Quickstart
 
-Requirements
+  Requirements
 
-- PlatformIO or Arduino IDE
-- Arduino Mega (ATmega2560) or compatible board
+  - PlatformIO or Arduino IDE
+  - Arduino Mega (ATmega2560) or compatible board
 
-Install (PlatformIO)
+  Install via PlatformIO
 
-```bash
-platformio lib install "Chassis"
-```
+  ```bash
+  platformio lib install "Chassis"
+  ```
 
-Example (SimpleDrive - see `examples/SimpleDrive`)
+  Build locally (PlatformIO)
 
-```cpp
-#include <Chassis.h>
-Chassis chassis;
-void setup() {
-  chassis.begin();
-}
-void loop() {
-  chassis.driveForward(150);
-  delay(2000);
-  chassis.stop();
-  delay(2000);
-}
-```
+  ```bash
+  # build
+  platformio run
 
-## SD Card structure
+  # build and upload using the project platformio.ini
+  platformio run -e ATmega2560 -t upload
+  ```
 
-- `CONF.TXT` in root — configuration
-- `commands/GUIDE.TXT` — commands to execute
+  ## Example (SimpleDrive)
 
-## Development
+  See `examples/SimpleDrive/SimpleDrive.ino` for a minimal example that drives forward for 2s and stops.
 
-Run the example or build with PlatformIO using the `platformio.ini` provided in the repository.
+  ```cpp
+  #include <Chassis.h>
+  Chassis chassis;
+  void setup() {
+    chassis.begin();
+  }
+  void loop() {
+    chassis.driveForward(150);
+    delay(2000);
+    chassis.stop();
+    delay(2000);
+  }
+  ```
 
-## License
+  ## SD Card structure
 
-This library is released under the AFL-3.0 license. See `LICENSE` for details.
+  - `CONF.TXT` in root — configuration
+  - `commands/GUIDE.TXT` — commands to execute
 
->>>>>>> db774c7 (Initial import: CI, LICENSE, examples, tests, metadata v1.2.0)
+  ## Development & Testing
+
+  - A minimal PlatformIO `platformio.ini` is included for building locally.
+  - Unit tests are under `test/` and use the Unity framework (suitable for non-hardware logic).
+
+  ## Contributing
+
+  If you'd like to contribute:
+
+  - Fork the repo and open a pull request against `main`.
+  - Add unit tests for new logic where possible.
+
+  ## License
+
+  This library is released under the AFL-3.0 license. See `LICENSE` for details.
