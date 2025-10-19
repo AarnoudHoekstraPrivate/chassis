@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+      - name: Install PlatformIO
+        run: python -m pip install -U platformio
+      - name: Install library deps
+        run: |
+          cd ${{ github.workspace }}
+          platformio lib install
+      - name: Build (ATmega2560)
+        run: |
+          platformio run -e ATmega2560
