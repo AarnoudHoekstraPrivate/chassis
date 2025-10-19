@@ -8,9 +8,41 @@
 #ifndef Chassis_h
 #define Chassis_h
 
-#include <Arduino.h>
-#include <SD.h>
-#include <Wire.h>
+#if defined(__has_include)
+#  if __has_include(<Arduino.h>)
+#    include <Arduino.h>
+#  elif __has_include(<arduino.h>)
+#    include <arduino.h>
+#  else
+#    warning "Arduino header not found; please ensure PlatformIO/Arduino core is installed and include paths are set"
+#  endif
+#else
+#  include <Arduino.h>
+#endif
+
+#if defined(__has_include)
+#  if __has_include(<SD.h>)
+#    include <SD.h>
+#  elif __has_include(<sd.h>)
+#    include <sd.h>
+#  else
+#    warning "SD header not found; SD functionality will fail to compile without the library"
+#  endif
+#else
+#  include <SD.h>
+#endif
+
+#if defined(__has_include)
+#  if __has_include(<Wire.h>)
+#    include <Wire.h>
+#  elif __has_include(<wire.h>)
+#    include <wire.h>
+#  else
+#    warning "Wire header not found; I2C/Wire functionality will fail to compile without the library"
+#  endif
+#else
+#  include <Wire.h>
+#endif
 
 // debug define
 #define DEBUG                     false

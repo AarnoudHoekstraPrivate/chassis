@@ -135,12 +135,11 @@ bool Chassis::initialiseFromFile(String fileName)
 {
     bool success = true;
     
-    if (fileName == NULL)
-    {
-        writeToOutput("Chassis::initialiseFromFile ERROR fileName is NULL");
-        
-        success = false;
-    }
+  if (fileName.length() == 0)
+  {
+    writeToOutput("Chassis::initialiseFromFile ERROR fileName is empty");
+    success = false;
+  }
     
     success = success && SD.begin();
     
@@ -151,27 +150,27 @@ bool Chassis::initialiseFromFile(String fileName)
         confFile = SD.open(fileName);
         if (confFile)
         {
-            int numConfItems = 0;
-            String lineItem = "";
-            String confItems[NUM_CONFIG_ITEMS][2];
-                
-            lineItem[0] = '\0';
-                
-            while (confFile.available() && (numConfItems < NUM_CONFIG_ITEMS))
-            {
-                lineItem = confFile.readStringUntil(';');
-                lineItem [lineItem.length() + 1 ] = '\0';
-                lineItem.trim();
-                lineItem.replace(" ", "");
-                
-                if (DEBUG) Serial.println(lineItem);
-                
-                int pos = lineItem.indexOf("=");
-                confItems[numConfItems][0] = lineItem.substring(0, pos);
-                confItems[numConfItems][1] = lineItem.substring(pos+1, lineItem.length());
-                        
-                numConfItems++;
-            }
+      int numConfItems = 0;
+      String lineItem = "";
+      String confItems[NUM_CONFIG_ITEMS][2];
+
+      while (confFile.available() && (numConfItems < NUM_CONFIG_ITEMS))
+      {
+        lineItem = confFile.readStringUntil(';');
+        lineItem.trim();
+        lineItem.replace(" ", "");
+
+        if (lineItem.length() == 0) continue;
+
+        if (DEBUG) Serial.println(lineItem);
+
+        int pos = lineItem.indexOf("=");
+        if (pos <= 0) continue; // malformed
+
+        confItems[numConfItems][0] = lineItem.substring(0, pos);
+        confItems[numConfItems][1] = lineItem.substring(pos+1);
+        numConfItems++;
+      }
                       
             confFile.close();
                 
