@@ -1,0 +1,29 @@
+{
+  "configurations": [
+    {
+      "name": "PlatformIO-chassis-compileDB",
+      "compileCommands": "${workspaceFolder}/compile_commands.json",
+      "intelliSenseMode": "gcc-x64",
+      "cStandard": "c11",
+      "cppStandard": "c++17"
+    },
+    {
+      "name": "PlatformIO-chassis-fallback",
+      "includePath": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/include",
+        "${workspaceFolder}/src",
+        "${workspaceFolder}/.pio/libdeps",
+        "${workspaceFolder}/.pio/build"
+      ],
+      "defines": [
+        "ARDUINO=10805",
+        "F_CPU=16000000L"
+      ],
+      "intelliSenseMode": "gcc-x64",
+      "cStandard": "c11",
+      "cppStandard": "c++17"
+    }
+  ],
+  "version": 4
+}
